@@ -13,7 +13,6 @@ import {
   sendToken,
 } from '../utils/jwt';
 import { redis } from '../utils/redis';
-import { idText } from 'typescript';
 import { getUserById } from '../services/user.service';
 import cloudinary from 'cloudinary';
 
