@@ -10,7 +10,8 @@ import {
   addQuestion,
   addAnswer,
   addReview,
-  addReplyToReveiew
+  addReplyToReveiew,
+  getAllCourses
 } from '../controllers/course.controller';
 
 const router = express.Router();
@@ -34,6 +35,8 @@ router.put('/add-question', isAuthenticated, addQuestion);
 router.put('/add-answer', isAuthenticated, addAnswer);
 router.put('/add-review/:id', isAuthenticated, addReview);
 router.put('/add-reply', isAuthenticated,authorizeRoles("admin"), addReplyToReveiew);
+router.get('/get-all-courses', isAuthenticated,authorizeRoles("admin"), getAllCourses);
+
 
 
 

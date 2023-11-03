@@ -2,13 +2,14 @@ import { NextFunction, Request, Response } from 'express';
 import { catchAsyncError } from '../middleware/catchAsyncError';
 import ErrorHandler from '../utils/errorHandler';
 import cloudinary from 'cloudinary';
-import { createCourse } from '../services/course.service';
+import { createCourse, getAllCoursesService } from '../services/course.service';
 import CourseModel from '../models/course.model';
 import { redis } from '../utils/redis';
 import mongoose from 'mongoose';
 import ejs from 'ejs';
 import path from 'path';
 import sendMail from '../utils/sendMail';
+import NotificationModel from '../models/notification.model';
 export const uploadCourse = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -189,6 +190,12 @@ export const addQuestion = catchAsyncError(
       //add this question to our course content
       courseContent.question.push(newQuestion);
 
+      //send notification
+      await NotificationModel.create({
+        user: req.user?._id,
+        title: 'New Question',
+        message: `You have a new question in ${courseContent.title}`,
+      });
       //save the updated course
       await course?.save();
 
@@ -247,10 +254,17 @@ export const addAnswer = catchAsyncError(
       //add answer to course content
       question.questionReplies.push(newAnswer);
 
-      //note we need to send notification to admin to reply to questions asked
+      await course?.save();
 
       if (req.user?._id === question.user._id) {
         //create a reply, send notification
+        //note we need to send notification to admin to reply to questions asked
+
+        await NotificationModel.create({
+          user: req.user?._id,
+          title: 'New Question Reply Received',
+          message: `You have a new question reply in in ${courseContent.title}`,
+        });
       } else {
         //send email to the user: new answer added to your question
         const data = {
@@ -368,7 +382,7 @@ export const addReplyToReveiew = catchAsyncError(
         return next(new ErrorHandler('course not found', 404));
       }
       const review = course?.reviews?.find(
-        (rev:any) => rev._id.toString() === reviewId
+        (rev: any) => rev._id.toString() === reviewId
       );
       if (!review) {
         return next(new ErrorHandler('Review not found', 404));
@@ -378,8 +392,8 @@ export const addReplyToReveiew = catchAsyncError(
         user: req.user,
         comment,
       };
-      if(!review.commentReplies) {
-        review.commentReplies =[]
+      if (!review.commentReplies) {
+        review.commentReplies = [];
       }
 
       review.commentReplies?.push(replyData);
@@ -390,6 +404,17 @@ export const addReplyToReveiew = catchAsyncError(
         success: true,
         course,
       });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//get all courses
+export const getAllCourses = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllCoursesService(res);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }

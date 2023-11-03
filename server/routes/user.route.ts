@@ -10,6 +10,7 @@ import {
   updateUserInfo,
   updatePassword,
   updateProfilePicture,
+  getAllUsers,
 } from '../controllers/user.controller';
 import { authorizeRoles, isAuthenticated } from '../middleware/auth';
 
@@ -25,6 +26,8 @@ router.post('/social-auth', socialAuth);
 router.put('/update-user-info',isAuthenticated, updateUserInfo)
 router.put('/update-Password',isAuthenticated, updatePassword)
 router.put('/update-user-avatar',isAuthenticated, updateProfilePicture)
+router.get('/get-all-users',isAuthenticated,authorizeRoles("admin"), getAllUsers)
+
 
 
 
