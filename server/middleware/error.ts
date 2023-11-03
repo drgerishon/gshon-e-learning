@@ -15,8 +15,8 @@ export const ErrorMiddleware= (err:any, req: Request, res:Response, next:NextFun
         const message = `Json web token is invalid, try again`;
         err =  new ErrorHandler(message, 400)
     }
-    //jet expires error
-    if(err.name === "TokenExpitedError"){
+    //jet expires error  TokenExpiredError
+    if(err.name === "TokenExpiredError"){
         const message = `Json web token is expired, try again`;
         err =  new ErrorHandler(message, 400)
     }

@@ -13,7 +13,7 @@ import {
   sendToken,
 } from '../utils/jwt';
 import { redis } from '../utils/redis';
-import { getAllUsersService, getUserById } from '../services/user.service';
+import { getAllUsersService, getUserById, updateUserRoleService } from '../services/user.service';
 import cloudinary from 'cloudinary';
 
 //register user
@@ -413,6 +413,44 @@ export const getAllUsers = catchAsyncError(async(req:Request, res:Response, next
     getAllUsersService(res)
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 400));
+    
+  }
+})
+
+
+//update user Role - only admin
+
+export const updateUserRole = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
+    try {
+      const {id, role} = req.body;
+      updateUserRoleService(id, role, res)
+    } catch (error:any) {
+      return next(new ErrorHandler(error.message,500))
+      
+    }
+})
+
+//delete user Role - only admin
+
+export const deleteUser = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id)
+    if(!user) {
+      return next(new ErrorHandler("User not found", 404))
+    }
+
+    await user.deleteOne({id})
+
+    await redis.del(id)
+
+    res.status(200).json({
+      success:true,
+      message: "user deleted successfully"
+    })
+  } catch (error:any) {
+    return next(new ErrorHandler(error.message,500))
     
   }
 })

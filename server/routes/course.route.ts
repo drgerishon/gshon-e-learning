@@ -11,7 +11,8 @@ import {
   addAnswer,
   addReview,
   addReplyToReveiew,
-  getAllCourses
+  getAllCourses,
+  deleteCourse
 } from '../controllers/course.controller';
 
 const router = express.Router();
@@ -36,6 +37,8 @@ router.put('/add-answer', isAuthenticated, addAnswer);
 router.put('/add-review/:id', isAuthenticated, addReview);
 router.put('/add-reply', isAuthenticated,authorizeRoles("admin"), addReplyToReveiew);
 router.get('/get-all-courses', isAuthenticated,authorizeRoles("admin"), getAllCourses);
+router.delete('/delete-course/:id', isAuthenticated,authorizeRoles("admin"), deleteCourse);
+
 
 
 
