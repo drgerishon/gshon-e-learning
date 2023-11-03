@@ -13,7 +13,11 @@ import {
   sendToken,
 } from '../utils/jwt';
 import { redis } from '../utils/redis';
-import { getAllUsersService, getUserById, updateUserRoleService } from '../services/user.service';
+import {
+  getAllUsersService,
+  getUserById,
+  updateUserRoleService,
+} from '../services/user.service';
 import cloudinary from 'cloudinary';
 
 //register user
@@ -222,7 +226,9 @@ export const updateAccessToken = catchAsyncError(
       //update cookie with new token
       res.cookie('access_token', accessToken, accessTokenOptions);
       res.cookie('refresh_token', refreshToken, refreshTokenOptions);
-
+      //update redis also
+      await redis.set(user._id, JSON.stringify(user), 'EX', 604800); //7DAYS (604800 -seconds)
+      
       res.status(200).json({
         status: 'success',
         accessToken,
@@ -298,8 +304,6 @@ export const updateUserInfo = catchAsyncError(
 
       //also update redis (cash)
       await redis.set(userId, JSON.stringify(user));
-
-      
 
       res.status(201).json({
         success: true,
@@ -406,51 +410,52 @@ export const updateProfilePicture = catchAsyncError(
   }
 );
 
-
 //get all user - only for admin
-export const getAllUsers = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
-  try {
-    getAllUsersService(res)
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400));
-    
+export const getAllUsers = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
   }
-})
-
+);
 
 //update user Role - only admin
 
-export const updateUserRole = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
+export const updateUserRole = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const {id, role} = req.body;
-      updateUserRoleService(id, role, res)
-    } catch (error:any) {
-      return next(new ErrorHandler(error.message,500))
-      
+      const { id, role } = req.body;
+      updateUserRoleService(id, role, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
-})
+  }
+);
 
 //delete user Role - only admin
 
-export const deleteUser = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
-  try {
-    const { id } = req.params;
+export const deleteUser = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
 
-    const user = await User.findById(id)
-    if(!user) {
-      return next(new ErrorHandler("User not found", 404))
+      const user = await User.findById(id);
+      if (!user) {
+        return next(new ErrorHandler('User not found', 404));
+      }
+
+      await user.deleteOne({ id });
+
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'user deleted successfully',
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
-
-    await user.deleteOne({id})
-
-    await redis.del(id)
-
-    res.status(200).json({
-      success:true,
-      message: "user deleted successfully"
-    })
-  } catch (error:any) {
-    return next(new ErrorHandler(error.message,500))
-    
   }
-})
+);
