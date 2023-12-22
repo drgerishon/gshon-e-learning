@@ -6,6 +6,7 @@ import ThemeSwitcher from '../utils/ThemeSwitcher';
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from 'react-icons/hi';
 import CustomModel from '../utils/CustomModel';
 import Login from './Auth/Login';
+import SignUp from './Auth/SignUp';
 
 type Props = {
   open: boolean;
@@ -103,6 +104,20 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
               setRoute={setRoute}
               activeItem={activeItem}
               component={Login}
+            />
+          )}
+        </>
+      )}
+
+{route === 'Sign-Up' && (
+        <>
+          {open && (
+            <CustomModel
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={SignUp}
             />
           )}
         </>
