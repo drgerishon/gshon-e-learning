@@ -4,14 +4,18 @@ import React, { useState, FC } from 'react';
 import NavItems from '../utils/NavItems';
 import ThemeSwitcher from '../utils/ThemeSwitcher';
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from 'react-icons/hi';
+import CustomModel from '../utils/CustomModel';
+import Login from './Auth/Login';
 
 type Props = {
   open: boolean;
   activeItem: number;
   setOpen: (open: boolean) => void;
+  route: string;
+  setRoute: (route: string) => void;
 };
 
-const Header: FC<Props> = ({ activeItem, setOpen }) => {
+const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
 
@@ -76,12 +80,12 @@ const Header: FC<Props> = ({ activeItem, setOpen }) => {
             onClick={handleClose}
             id="screen"
           >
-            <div className='w-[70%] fixed z-[999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0'>
-              <NavItems activeItem={activeItem} isMobile={true}/>
-              <HiOutlineUserCircle 
-              size={25}
-              className="cursor-pointer ml-5 my-2 dark:text-white text-black"
-              onClick={() => setOpen(true)}
+            <div className="w-[70%] fixed z-[999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
+              <NavItems activeItem={activeItem} isMobile={true} />
+              <HiOutlineUserCircle
+                size={25}
+                className="cursor-pointer ml-5 my-2 dark:text-white text-black"
+                onClick={() => setOpen(true)}
               />
               <br />
               <br />
@@ -90,6 +94,19 @@ const Header: FC<Props> = ({ activeItem, setOpen }) => {
           </div>
         )}
       </div>
+      {route === 'Login' && (
+        <>
+          {open && (
+            <CustomModel
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              activeItem={activeItem}
+              component={Login}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };

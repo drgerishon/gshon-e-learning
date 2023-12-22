@@ -29,6 +29,7 @@ const ThemeSwitcher: FC<Props> = (props) => {
       ) : (
         <BiSun 
         size={25}
+        fill="white"
         className="cursor-pointer"
         onClick={() => setTheme('light')}
         />
