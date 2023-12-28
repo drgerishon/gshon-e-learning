@@ -9,12 +9,14 @@ import Login from './Auth/Login';
 import SignUp from './Auth/SignUp';
 import Verification from './Auth/Verification';
 import { useSelector } from 'react-redux';
-import avatarImg from '../assets/avatar.png'
+import avatarImg from '../assets/avatar.png';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { useSocialAuthMutation } from '@/redux/features/auth/authApi';
+import {
+  useLogoutQuery,
+  useSocialAuthMutation,
+} from '@/redux/features/auth/authApi';
 import toast from 'react-hot-toast';
-
 
 type Props = {
   open: boolean;
@@ -28,19 +30,32 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
   const { user } = useSelector((state: any) => state.auth);
-  const {data} = useSession()
-const [socialAuth, {isSuccess, error}] = useSocialAuthMutation()
+  const [logout, setLogout] = useState(false);
+  const {} = useLogoutQuery(undefined, { skip: !logout ? true : false });
 
-useEffect(() => {
-  if(!user) {
-    if(data) {
-      socialAuth({email: data?.user?.email, name: data?.user?.name, avatar: data?.user?.image})
+  const { data } = useSession();
+  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+
+  useEffect(() => {
+    if (!user) {
+      if (data) {
+        socialAuth({
+          email: data?.user?.email,
+          name: data?.user?.name,
+          avatar: data?.user?.image,
+        });
+      }
     }
-  }
-  if(isSuccess) {
-    toast.success("Login successful")
-  }
-},[data, user])
+   if(data === null) {
+    if (isSuccess) {
+      toast.success('Login successful');
+    }
+   }
+    //data from session -- logout
+    if (data === null) {
+      setLogout(true)
+    }
+  }, [data, user]);
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 80) {
@@ -88,9 +103,14 @@ useEffect(() => {
                 />
               </div>
               {user ? (
-                <Link href={"/profile"}>
-                  <Image src={user.avatar ? user.avatar : avatarImg} alt="" 
-                  className='w-[30px] h-[30px]  rounded-full cursor-pointer'
+                <Link href={'/profile'}>
+                  <Image
+                    src={user.avatar ? user.avatar.url : avatarImg}
+                    alt=""
+                    width={30}
+                    height={30}
+                    className="w-[30px] h-[30px]  rounded-full cursor-pointer"
+                    style={{border: activeItem ===5 ? "2px solid #37a39a" : "none"}}
                   />
                 </Link>
               ) : (

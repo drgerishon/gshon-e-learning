@@ -1,4 +1,10 @@
 // next.config.js
-const nextConfig = {}
+const nextConfig = {
+  images: {
+    domains: ['res.cloudinary.com'],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
+
+//images.remotePatterns
