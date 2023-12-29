@@ -55,7 +55,7 @@ const AdminSidebar: FC<Props> = (props) => {
   const [isCollapsed, setIsCollaped] = useState(false);
   const [selected, setSelected] = useState('Dashboard');
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const {theme, setTheme}= useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -73,7 +73,7 @@ const AdminSidebar: FC<Props> = (props) => {
       sx={{
         '& .pro-sidebar-inner': {
           background: `${
-            theme === 'dark' ? '#111c43 !important' : '#fff !importtant'
+            theme === 'dark' ? '#111c43 !important' : '#fff !important'
           }`,
         },
         '& .pro-icon-wrapper': {
