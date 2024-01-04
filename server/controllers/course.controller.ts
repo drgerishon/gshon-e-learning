@@ -10,6 +10,7 @@ import ejs from 'ejs';
 import path from 'path';
 import sendMail from '../utils/sendMail';
 import NotificationModel from '../models/notification.model';
+import axios from 'axios';
 export const uploadCourse = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -83,8 +84,8 @@ export const getSingleCourse = catchAsyncError(
         const course = await CourseModel.findById(req.params.id).select(
           '-courseData.videoUrl -courseData.suggestion -courseData.question -courseData.links'
         );
-        await redis.set(courseId, JSON.stringify(course), 'EX', 604800);//7 days expire
-        
+        await redis.set(courseId, JSON.stringify(course), 'EX', 604800); //7 days expire
+
         res.status(200).json({
           success: true,
           course,
@@ -422,28 +423,61 @@ export const getAllCourses = catchAsyncError(
   }
 );
 
-
 //delete course - only admin
 
-export const deleteCourse = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
-  try {
-    const { id } = req.params;
+export const deleteCourse = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
 
-    const course = await CourseModel.findById(id)
-    if(!course) {
-      return next(new ErrorHandler("course not found", 404))
+      const course = await CourseModel.findById(id);
+      if (!course) {
+        return next(new ErrorHandler('course not found', 404));
+      }
+
+      await course.deleteOne({ id });
+
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'course deleted successfully',
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
-
-    await course.deleteOne({id})
-
-    await redis.del(id)
-
-    res.status(200).json({
-      success:true,
-      message: "course deleted successfully"
-    })
-  } catch (error:any) {
-    return next(new ErrorHandler(error.message,500))
-    
   }
-})
+);
+
+//generate video url from vdoCipher
+export const generateVideoUrl = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { videoId } = req.body;
+
+      if (!videoId) {
+        // If videoId is not provided, send a 400 Bad Request response
+        return res.status(400).json({ success: false, message: 'videoId is required' });
+      }
+
+      const response = await axios.post(
+        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+        {
+          ttl: 300,
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Apisecret ${process.env.VIDEO_CIPHER_API_KEY}`,
+          },
+        }
+      );
+
+      res.json(response.data);
+    } catch (error) {
+      console.error(error);
+      return next(new ErrorHandler(error, 500));
+    }
+  }
+);

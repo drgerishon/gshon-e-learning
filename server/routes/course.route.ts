@@ -12,36 +12,54 @@ import {
   addReview,
   addReplyToReveiew,
   getAllCourses,
-  deleteCourse
+  deleteCourse,
+  generateVideoUrl,
 } from '../controllers/course.controller';
+import { updateAccessToken } from '../controllers/user.controller';
 
 const router = express.Router();
 
 router.post(
   '/create-course',
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles('admin'),
   uploadCourse
 );
 router.put(
   '/edit-course/:id',
+  updateAccessToken,
   isAuthenticated,
   authorizeRoles('admin'),
   editCourse
 );
 router.get('/get-course/:id', getSingleCourse);
-router.get('/get-all-course', getCourses);
-router.get('/get-course-content/:id', isAuthenticated, getCourseByUser);
-router.put('/add-question', isAuthenticated, addQuestion);
-router.put('/add-answer', isAuthenticated, addAnswer);
-router.put('/add-review/:id', isAuthenticated, addReview);
-router.put('/add-reply', isAuthenticated,authorizeRoles("admin"), addReplyToReveiew);
-router.get('/get-all-courses', isAuthenticated,authorizeRoles("admin"), getAllCourses);
-router.delete('/delete-course/:id', isAuthenticated,authorizeRoles("admin"), deleteCourse);
-
-
-
-
-
+router.get('/get-all-course',getCourses);
+router.get('/get-course-content/:id',updateAccessToken, isAuthenticated, getCourseByUser);
+router.put('/add-question',updateAccessToken, isAuthenticated, addQuestion);
+router.put('/add-answer',updateAccessToken, isAuthenticated, addAnswer);
+router.put('/add-review/:id', updateAccessToken, isAuthenticated, addReview);
+router.put(
+  '/add-reply',
+  updateAccessToken,
+  isAuthenticated,
+  authorizeRoles('admin'),
+  addReplyToReveiew
+);
+router.get(
+  '/get-all-courses',
+  updateAccessToken,
+  isAuthenticated,
+  authorizeRoles('admin'),
+  getAllCourses
+);
+router.delete(
+  '/delete-course/:id',
+  updateAccessToken,
+  isAuthenticated,
+  authorizeRoles('admin'),
+  deleteCourse
+);
+router.post('/getVdoCipherOtp', generateVideoUrl);
 
 export default router;

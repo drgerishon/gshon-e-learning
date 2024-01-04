@@ -23,13 +23,13 @@ router.post('/activate-user', activateUser);
 router.post('/login', loginUser);
 router.get('/logout', isAuthenticated, logoutUser);
 router.get('/refreshtoken', updateAccessToken);
-router.get('/get-user', isAuthenticated, getUserInfo);
+router.get('/get-user',updateAccessToken, isAuthenticated, getUserInfo);
 router.post('/social-auth', socialAuth);
-router.put('/update-user-info',isAuthenticated, updateUserInfo)
-router.put('/update-Password',isAuthenticated, updatePassword)
-router.put('/update-user-avatar',isAuthenticated, updateProfilePicture)
-router.get('/get-all-users',isAuthenticated,authorizeRoles("admin"), getAllUsers)
-router.put('/update-user',isAuthenticated,authorizeRoles("admin"), updateUserRole)
+router.put('/update-user-info',updateAccessToken,isAuthenticated, updateUserInfo)
+router.put('/update-Password',updateAccessToken,isAuthenticated, updatePassword)
+router.put('/update-user-avatar',updateAccessToken,isAuthenticated, updateProfilePicture)
+router.get('/get-all-users',updateAccessToken,isAuthenticated,authorizeRoles("admin"), getAllUsers)
+router.put('/update-user',updateAccessToken,isAuthenticated,authorizeRoles("admin"), updateUserRole)
 router.delete('/delete-user/:id',isAuthenticated,authorizeRoles("admin"), deleteUser)
 
 
