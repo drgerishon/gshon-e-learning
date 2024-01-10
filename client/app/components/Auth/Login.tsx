@@ -89,13 +89,13 @@ const [login, {isSuccess,data,error, isLoading}] = useLoginMutation()
           />
           {!show ? (
             <AiOutlineEyeInvisible
-              className="absolute bottom-3 right-2 z-1 cursor-pointer"
+              className="absolute bottom-3 right-2 z-1 cursor-pointer dark:text-white text-black"
               size={20}
               onClick={() => setShow(true)}
             />
           ) : (
             <AiOutlineEye
-              className="absolute bottom-3 right-2 z-1 cursor-pointer"
+              className="absolute bottom-3 right-2 z-1 cursor-pointer dark:text-white text-black"
               size={20}
               onClick={() => setShow(false)}
             />

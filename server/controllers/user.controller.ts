@@ -228,7 +228,7 @@ export const updateAccessToken = catchAsyncError(
       res.cookie('refresh_token', refreshToken, refreshTokenOptions);
       //update redis also
       await redis.set(user._id, JSON.stringify(user), 'EX', 604800); //7DAYS (604800 -seconds)
-     next();
+      return next(); //to call the next function
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
@@ -286,7 +286,7 @@ export const updateUserInfo = catchAsyncError(
       const { name } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
       const user = await User.findById(userId);
-    
+
       if (name && user) {
         user.name = name;
         await user.save();
@@ -416,8 +416,14 @@ export const getAllUsers = catchAsyncError(
 export const updateUserRole = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id, role } = req.body;
-      updateUserRoleService(id, role, res);
+      const { email, role } = req.body;
+      const isUserExists = await User.findOne({ email });
+      if (isUserExists) {
+        const id = isUserExists.id;
+        updateUserRoleService(id, role, res);
+      } else {
+        res.status(400).json({ success: false, message: 'User not found' });
+      }
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }

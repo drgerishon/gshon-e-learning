@@ -9,6 +9,7 @@ type Props = {
   setActive: (active: number) => void;
   courseData: any;
   handleCourseCreate: any;
+  isEdit: boolean;
 };
 
 const CoursePreview: FC<Props> = ({
@@ -16,6 +17,7 @@ const CoursePreview: FC<Props> = ({
   handleCourseCreate,
   courseData,
   setActive,
+  isEdit,
 }) => {
   const discountPercentage =
     ((courseData?.estimatedPrice - courseData?.price) /
@@ -24,13 +26,13 @@ const CoursePreview: FC<Props> = ({
 
   const discountedPercenatgePrice = discountPercentage.toFixed(0);
 
-  const createCourse =() => {
-    handleCourseCreate()
-  }
+  const createCourse = () => {
+    handleCourseCreate();
+  };
 
-  const prevButton =() => {
-    setActive(active -1)
-  }
+  const prevButton = () => {
+    setActive(active - 1);
+  };
   return (
     <div className="w-[90%] m-auto py-5 mb-5">
       <div className="w-full relative">
@@ -120,9 +122,12 @@ const CoursePreview: FC<Props> = ({
         {courseData?.prerequisites?.map((item: any, index: number) => (
           <div className="w-full flex 800px:items-center py-2" key={index}>
             <div className="w-[15px] mr-1">
-              <IoMdCheckmarkCircleOutline size={30} className="dark:text-white text-black" />
+              <IoMdCheckmarkCircleOutline
+                size={30}
+                className="dark:text-white text-black"
+              />
             </div>
-              <p className="pl-2 dark:text-white text-black">{item.title}</p>
+            <p className="pl-2 dark:text-white text-black">{item.title}</p>
           </div>
         ))}
         <br />
@@ -132,20 +137,27 @@ const CoursePreview: FC<Props> = ({
           <h1 className="text-[25px] font-Poppins font-[600] dark:text-white text-black">
             Course Details
           </h1>
-          <p className='text-[18px] mt-[20px] whitespace-pre-line w-full overflow-hidden'>
-
-          {courseData?.description}
+          <p className="text-[18px] mt-[20px] whitespace-pre-line w-full overflow-hidden">
+            {courseData?.description}
           </p>
         </div>
         <br />
         <br />
         <div className="w-full flex items-center justify-between">
-            <div className='w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[
-                #fff] roundedmt-8 cursor-pointer' onClick={() => prevButton()}>
-                    Prev
-                </div>
-                <div className='w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[
-                #fff] roundedmt-8 cursor-pointer' onClick={() => createCourse()}>Create</div>
+          <div
+            className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[
+                #fff] roundedmt-8 cursor-pointer"
+            onClick={() => prevButton()}
+          >
+            Prev
+          </div>
+          <div
+            className="w-full 800px:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] text-center text-[
+                #fff] roundedmt-8 cursor-pointer"
+            onClick={() => createCourse()}
+          >
+          { isEdit ? "Edit"  : "Create"}
+          </div>
         </div>
       </div>
     </div>
