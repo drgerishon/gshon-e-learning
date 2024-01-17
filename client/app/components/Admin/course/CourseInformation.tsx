@@ -1,6 +1,8 @@
 import { styles } from '@/app/styles/style';
 import Image from 'next/image';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
+import EditCategories from '../Cutomization/EditCategories';
+import { useGetHeroDataQuery } from '@/redux/features/layout/layoutApi';
 
 type Props = {
   courseInfo: any;
@@ -16,7 +18,14 @@ const CourseInformation: FC<Props> = ({
   setActive,
 }) => {
   const [dragging, setDragging] = useState(false);
+  const { data } = useGetHeroDataQuery('Categories', {});
+  const [categories, setCategories] = useState([]);
 
+  useEffect(() => {
+    if (data) {
+      setCategories(data.layout.categories);
+    }
+  }, [data]);
   const handleSubmit = (e: any) => {
     e.preventDefault();
     setActive(active + 1);
@@ -158,6 +167,29 @@ const CourseInformation: FC<Props> = ({
           />
         </div>
         <br />
+        <div className="w-[50%]">
+          <label htmlFor="" className={`${styles.label} w-[50%]`}>
+            Course Categories
+          </label>
+          <select
+            name=""
+            id=""
+            className={`${styles.input}`}
+            value={courseInfo.category}
+            onChange={(e: any) =>
+              setCourseInfo({ ...courseInfo, category: e.target.value })
+            }
+          >
+            <option value="">Select Category</option>
+            {categories.map((item: any) => (
+              <option value={item.title} key={item._id} className="text-black">
+                {item.title}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <br />
         <div className="w-full flex justify-between">
           <div className="w-[45%]">
             <label htmlFor="" className={`${styles.label}`}>
@@ -210,19 +242,31 @@ const CourseInformation: FC<Props> = ({
             htmlFor="file"
             className={`w-full min-h-[10vh] dark:border-white border-[#00000026] p-3 border flex items-center justify-center ${
               dragging ? 'bg-blue-500' : 'bg-transparent'
-            }`} 
+            }`}
             onDragOver={handleDradOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-          >{courseInfo.thumbnail ? (
-            <img src={courseInfo.thumbnail} alt='' className='max-h-full w-full object-cover'/>
-          ): (
-            <span className='text-black dark:text-white cursor-pointer'>Drag and drop your thumbnail here or click to browse</span>
-          )}</label>
+          >
+            {courseInfo.thumbnail ? (
+              <img
+                src={courseInfo.thumbnail}
+                alt=""
+                className="max-h-full w-full object-cover"
+              />
+            ) : (
+              <span className="text-black dark:text-white cursor-pointer">
+                Drag and drop your thumbnail here or click to browse
+              </span>
+            )}
+          </label>
         </div>
         <br />
-        <div className='w-full flex items-center justify-end'>
-            <input type='submit' value="Next" className='w-full 800px:w-[180px] h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer'/>
+        <div className="w-full flex items-center justify-end">
+          <input
+            type="submit"
+            value="Next"
+            className="w-full 800px:w-[180px] h-[40px] bg-[#37a39a] text-center text-[#fff] rounded mt-8 cursor-pointer"
+          />
         </div>
       </form>
     </div>

@@ -36,6 +36,8 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
   const { data } = useSession();
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
 
+
+
   useEffect(() => {
     if (!user) {
       if (data) {

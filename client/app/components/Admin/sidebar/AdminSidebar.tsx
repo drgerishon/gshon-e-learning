@@ -55,7 +55,7 @@ const AdminSidebar: FC<Props> = (props) => {
   const [isCollapsed, setIsCollaped] = useState(false);
   const [selected, setSelected] = useState('Dashboard');
   const [mounted, setMounted] = useState(false);
-  const {theme, setTheme}= useTheme();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -218,7 +218,7 @@ const AdminSidebar: FC<Props> = (props) => {
               selected={selected}
               setSelected={setSelected}
             />
-           <Typography
+            <Typography
               variant="h5"
               sx={{ m: '15px 0 5px 20px' }}
               className="!text-[18px] text-black dark:text-[#ffffffc1] capitalize !font-[400]"
@@ -234,7 +234,7 @@ const AdminSidebar: FC<Props> = (props) => {
             />
             <Item
               title="FAQ"
-              to="/faq"
+              to="/admin/faq"
               icon={<QuizIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -289,7 +289,7 @@ const AdminSidebar: FC<Props> = (props) => {
               selected={selected}
               setSelected={setSelected}
             />
-             <Typography
+            <Typography
               variant="h6"
               sx={{ m: '15px 0 5px 20px' }}
               className="!text-[18px] text-black dark:text-[#ffffffc1] capitalize !font-[400]"
@@ -303,15 +303,15 @@ const AdminSidebar: FC<Props> = (props) => {
               selected={selected}
               setSelected={setSelected}
             />
-           <div onClick={logoutHandler}>
-           <Item
-              title="Logout"
-              to="/"
-              icon={<ExitToAppIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-           </div>
+            <div onClick={logoutHandler}>
+              <Item
+                title="Logout"
+                to="/"
+                icon={<ExitToAppIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+            </div>
           </Box>
         </Menu>
       </ProSidebar>
