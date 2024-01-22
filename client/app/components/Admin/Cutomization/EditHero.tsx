@@ -10,10 +10,10 @@ import toast from 'react-hot-toast';
 import { AiOutlineCamera } from 'react-icons/ai';
 
 type Props = {};
-
+''
 const EditHero: FC<Props> = (props) => {
   const [image, setImage] = useState('');
-  const [title, setTitle] = useState('');
+ const [title, setTitle] = useState('');
   const [subTitle, setSubTitle] = useState('');
   const { data, refetch } = useGetHeroDataQuery('Banner', {refetchOnMountOrArgChange:true});
   const [editLayout, { isSuccess, error }] = useEditLayoutMutation({});
@@ -51,7 +51,24 @@ const EditHero: FC<Props> = (props) => {
   const handleEdit = async () => {
     await editLayout({ type: 'Banner', image, title, subTitle });
   };
-
+  const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newTitle = e.target.value;
+    if (newTitle.trim() !== "") {
+      setTitle(newTitle);
+      setSubTitle((prevSubTitle) => prevSubTitle); // Keep the current subTitle
+    }
+  };
+  
+  const handleSubTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newSubTitle = e.target.value;
+    if (newSubTitle.trim() !== "") {
+      setSubTitle(newSubTitle);
+      setTitle((prevTitle) => prevTitle); // Keep the current title
+    }
+  };
+  
+  
+  
   return (
     <>
       <div className="w-full 1000px:flex items-center ml-12">
@@ -78,20 +95,20 @@ const EditHero: FC<Props> = (props) => {
           </div>
         </div>
         <div className="1000px:w-[60%] flex flex-col items-center 1000px:mt-[0px] text-center 1000px:text-left mt-[150px]">
-          <textarea
-            value={title}
-            placeholder="Improve your online learning experience better Instantly"
-            rows={4}
-            onChange={(e) => setTitle(e.target.value)}
-            className="dark:text-[#edfff4] text-[#000000ac] resize-none text-[30px] px-3 1000px:text-[40px] font-[600] bg-transparent"
-          ></textarea>
+        <textarea
+          value={title}
+          placeholder="Improve your online learning experience better Instantly"
+          rows={4}
+          onChange={handleTitleChange}
+          className="dark:text-[#edfff4] text-[#000000ac] resize-none text-[30px] px-3 1000px:text-[40px] font-[600] bg-transparent"
+        ></textarea>
 
-          <textarea
-            value={subTitle}
-            onChange={(e) => setSubTitle(e.target.value)}
-            placeholder="we have over 40k + 500k registred students"
-            className="dark:text-[#edfff4] text-[#000000ac] font-Poppins  font-[600] text-[18px] 1500px:!w-[55%] 1100px: !w-[78%] bg-transparent"
-          ></textarea>
+        <textarea
+          value={subTitle}
+          onChange={handleSubTitleChange}
+          placeholder="we have over 40k + 500k registered students"
+          className="dark:text-[#edfff4] text-[#000000ac] font-Poppins font-[600] text-[18px] 1500px:!w-[55%] 1100px: !w-[78%] bg-transparent"
+        ></textarea>
           <br />
           <br />
 

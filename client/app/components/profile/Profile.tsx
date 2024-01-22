@@ -1,12 +1,13 @@
 'use client';
 
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import SidebarProfile from './SidebarProfile';
 import { useLogoutQuery } from '@/redux/features/auth/authApi';
 import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import ProfileInfo from './ProfileInfo';
 import ChangePassword from './ChangePassword';
+import Loader from '../Loader';
 
 type Props = {
   user: any
@@ -23,6 +24,7 @@ const Profile: FC<Props> = ({user}) => {
     setLogout(true)
     await signOut();
   }
+ 
 
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
@@ -34,6 +36,8 @@ const Profile: FC<Props> = ({user}) => {
     });
   }
   return (
+   
+   
     <div className="w-[85%] flex mx-auto">
       <div
         className={`w-[60px] 800px:w-[310px] h-[450px] dark:bg-slate-900 bg-white bg-opacity-90 border dark:border-[#ffffff1d] border:-[#ffffff1d] rounded-[5px] shadow-xl dark:shadow-sm mt-[80px] mb-[80px] sticky  ${
@@ -61,6 +65,7 @@ const Profile: FC<Props> = ({user}) => {
          </div>
         )}
     </div>
+   
   );
 };
 
