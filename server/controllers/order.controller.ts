@@ -10,11 +10,26 @@ import sendMail from '../utils/sendMail';
 import NotificationModel from '../models/notification.model';
 import { newOrder } from '../services/order.service';
 import { getAllUsersService } from '../services/user.service';
+import { redis } from '../utils/redis';
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export const createOrder = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { courseId, payment_info } = req.body as IOrder;
+
+      if (payment_info) {
+        if ('id' in payment_info) {
+          const paymentIntentId = payment_info.id;
+          const paymentIntent = await stripe.paymentIntents.retrieve(
+            paymentIntentId
+          );
+          if (paymentIntent.status !== 'succeeded') {
+            return next(new ErrorHandler('Payment not authorized', 400));
+          }
+        }
+      }
 
       const user = await User.findById(req.user?._id);
 
@@ -37,6 +52,7 @@ export const createOrder = catchAsyncError(
         userId: user?._id,
         payment_info,
       };
+
 
       //send a main to confirm to user that order is procesed
       const mailData = {
@@ -71,20 +87,24 @@ export const createOrder = catchAsyncError(
       //update user courses
       user?.courses.push(course?._id);
 
+      await redis.set(req.user?._id, JSON.stringify(user))
+
       await user?.save();
 
       //send notification to admin
       await NotificationModel.create({
         user: user?._id,
         title: 'New Order',
-        message: `You are a new order for ${course?.name}`,
+        message: `You have a new order for ${course?.name}`,
       });
 
-      course.purchased ? course.purchased += 1 : course.purchased;
+      course.purchased ? (course.purchased += 1) : course.purchased;
 
       await course?.save();
 
       newOrder(data, res, next);
+
+
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -92,11 +112,47 @@ export const createOrder = catchAsyncError(
 );
 
 //get all orders - only for admin
-export const getAllOrders = catchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
-  try {
-    getAllUsersService(res)
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400));
-    
+export const getAllOrders = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   }
-})
+);
+
+//stripe implementation
+
+export const sendStripePublishableKey = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).json({
+      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    });
+  }
+);
+
+//new payment
+export const newPayment = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const myPayment = await stripe.paymentIntents.create({
+        amount: req.body.amount,
+        currency: 'USD',
+        metadata: {
+          company: ' Gshon E-learning',
+        },
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      res.status(201).json({
+        success: true,
+        client_secret: myPayment.client_secret,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);

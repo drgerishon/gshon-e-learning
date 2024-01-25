@@ -48,7 +48,7 @@ const [login, {isSuccess,data,error, isLoading}] = useLoginMutation()
       toast.error(errorData.data.message)
      }
     }
-  },[error, isSuccess])
+  },[error, isSuccess, setOpen])
 
   const { errors, touched, values, handleChange, handleSubmit } = formik;
   return (

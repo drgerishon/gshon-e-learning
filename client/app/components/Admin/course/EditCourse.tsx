@@ -1,13 +1,13 @@
 'use client';
 import React, { useEffect, useState, FC } from 'react';
-import CourseInformation from './CourseInformation';
-import CourseOptions from './CourseOptions';
-import CourseData from './CourseData';
-import CourseContent from './CourseContent';
-import CoursePreview from './CoursePreview';
 import {  useEditCourseMutation, useGetALLCoursesQuery } from '@/redux/features/courses/courseApis';
 import toast from 'react-hot-toast';
 import { redirect } from 'next/navigation';
+import CourseInformation from './CourseInformation';
+import CourseData from './CourseData';
+import CourseContent from './CourseContent';
+import CoursePreview from './CoursePreview';
+import CourseOptions from './CourseOptions';
 
 type Props = {
     id: string;

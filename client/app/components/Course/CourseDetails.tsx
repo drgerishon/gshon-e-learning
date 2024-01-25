@@ -1,19 +1,28 @@
+import { styles } from '@/app/styles/style';
 import CoursePlayer from '@/app/utils/CoursePlayer';
 import Ratings from '@/app/utils/Ratings';
-import React from 'react';
+import Link from 'next/link';
+import React, { useState } from 'react';
 import {
   IoMdCheckmarkCircle,
   IoMdCheckmarkCircleOutline,
+  IoMdCloseCircleOutline,
 } from 'react-icons/io';
 import { useSelector } from 'react-redux';
 import { format } from 'timeago.js';
+import CourseContentList from '../Course/CourseContentList';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckOutForm from '../Payment/CheckOutForm';
 
 type Props = {
   data: any;
+  clientSecret: string;
+  stripePromise: any;
 };
 
-const CourseDetails = ({ data }: Props) => {
+const CourseDetails = ({ data, clientSecret, stripePromise }: Props) => {
   const { user } = useSelector((state: any) => state.auth);
+  const [open, setOpen] = useState(false);
 
   const discountedPercentage =
     ((data.estimatedPrice - data.price) / data?.estimatedPrice) * 100;
@@ -23,8 +32,8 @@ const CourseDetails = ({ data }: Props) => {
   const isPurchased =
     user && user?.courses?.find((item: any) => item._id === data._id);
 
-  const handlerOrder = (e: any) => {
-    console.log('gggg');
+  const handleOrder = (e: any) => {
+    setOpen(true);
   };
 
   return (
@@ -93,6 +102,7 @@ const CourseDetails = ({ data }: Props) => {
                 Course Overview
               </h1>
               {/* course content */}
+              <CourseContentList data={data?.courseData} isDemo={true} />
             </div>
             <br />
             <br />
@@ -157,7 +167,7 @@ const CourseDetails = ({ data }: Props) => {
 
               <div className="flex items-center">
                 <h1 className="pt-5 text-[25px] text-black dark:text-white">
-                  {data.price === 0 ? 'Free' : data.price + '5'}
+                  {data.price === 0 ? 'Free' : data.price + 'ksh'}
                 </h1>
                 <h5 className="pl-3 text-[20px] mt-2 line-through opacity-80 text-black dark:text-white">
                   {data.estimatedPrice} ksh
@@ -166,10 +176,65 @@ const CourseDetails = ({ data }: Props) => {
                   {discountedPercentagePrice}% OFF
                 </h4>
               </div>
+              <div className="flex items-end">
+                {isPurchased ? (
+                  <Link
+                    className={`${styles.button} !w-[180px] my-3 font-Poppins cursor-pointer !bg-[crimson]`}
+                    href={`/course-access/${data._id}`}
+                  >
+                    Enter to Course
+                  </Link>
+                ) : (
+                  <div
+                    className={`${styles.button} !w-[180px] my-3 font-Poppins cursor-pointer !bg-[crimson]`}
+                    onClick={handleOrder}
+                  >
+                    Buy now {data.price} ksh
+                  </div>
+                )}
+              </div>
+              <br />
+              <p className="pb-1 text-black dark:text-white">
+                {' '}
+                :- source code included
+              </p>
+              <p className="pb-1 text-black dark:text-white">
+                {' '}
+                :- Full lifetime access
+              </p>
+              <p className="pb-1 text-black dark:text-white">
+                {' '}
+                :- Certificate of completion
+              </p>
+              <p className="pb-1 text-black dark:text-white">
+                {' '}
+                :- Premium support
+              </p>
             </div>
           </div>
         </div>
       </div>
+      <>
+        {open && (
+          <div className="w-full h-screen bg-[#00000036] fixed top-0 left-0 z-50 flex items-center justify-center">
+            <div className="w-[500px] min-h-[500px] bg-white rounded-xl shadow p-3">
+              <IoMdCloseCircleOutline
+                size={40}
+                className="text-black dark:cursor-pointer"
+                onClick={() => setOpen(false)}
+              />
+
+              <div className="w-full">
+                {stripePromise && clientSecret && (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CheckOutForm setOpen={setOpen} data={data} />
+                  </Elements>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     </div>
   );
 };

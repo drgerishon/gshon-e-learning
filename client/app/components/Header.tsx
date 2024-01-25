@@ -54,10 +54,10 @@ const Header: FC<Props> = ({ activeItem, setOpen, open, route, setRoute }) => {
     }
    }
     //data from session -- logout
-    if (data === null) {
-      setLogout(true)
-    }
-  }, [data, user]);
+    // if (data === null) {
+    //   setLogout(true)
+    // }
+  }, [data, isSuccess, socialAuth, user]);
   if (typeof window !== 'undefined') {
     window.addEventListener('scroll', () => {
       if (window.scrollY > 80) {

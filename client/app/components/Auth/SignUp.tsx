@@ -40,7 +40,7 @@ const SignUp: FC<Props> = ({ setRoute }) => {
         toast.error(errorData.data.message)
       }
     }
-  }, [ error, isSuccess])
+  }, [data?.message, error, isSuccess, setRoute])
   const formik = useFormik({
     initialValues: { name: '', email: '', password: '' },
     validationSchema: schema,
