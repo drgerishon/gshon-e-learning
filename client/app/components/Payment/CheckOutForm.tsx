@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 type Props = {
-  setOpen: (open: boolean) => void;
+  setOpen:any;
   data: any;
 };
 
@@ -40,10 +40,9 @@ const CheckOutForm = ({ setOpen, data }: Props) => {
       setIsLoading(false);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
       setIsLoading(false);
-      createOrder({ course: data._id, payment_info: paymentIntent });
+      createOrder({ courseId: data._id, payment_info: paymentIntent });
     }
   };
-console.log("my data" , data)
   useEffect(() => {
     if(orderData) {
         setLoadUser(true);

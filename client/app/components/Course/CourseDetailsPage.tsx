@@ -35,7 +35,7 @@ const CourseDetailsPage = ({ id }: Props) => {
       const amount = Math.round(data.course.price * 100);
       createPaymentIntent(amount);
     }
-  }, [config, createPaymentIntent, data]);
+  }, [config, data]);
 
   useEffect(() => {
     if (paymentIntentData) {
