@@ -30,4 +30,5 @@ const Page: FC<Props> = ({ setOpen }) => {
   );
 };
 
-export default Page;
+export { Page };
+export type { Props };
