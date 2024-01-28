@@ -5,11 +5,12 @@ import DashboardHeader from '../../../app/components/Admin/DashboardHeader';
 import AdminSidebar from '@/app/components/Admin/sidebar/AdminSidebar';
 import CourseAnalytics from '@/app/components/Admin/course/CourseAnalytics';
 
-type Props = {
-  setOpen: any;
-};
 
-const Page: FC<Props> = ({ setOpen }) => {
+type Props = {
+  setOpen:any;
+}
+
+const page = ({setOpen}: Props) => {
   return (
     <div>
       <Heading
@@ -28,7 +29,6 @@ const Page: FC<Props> = ({ setOpen }) => {
       </div>
     </div>
   );
-};
+}
 
-export { Page };
-export type { Props };
+export default page
