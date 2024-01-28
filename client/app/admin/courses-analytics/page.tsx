@@ -10,9 +10,9 @@ type Props = {
   setOpen:any;
 }
 
-const page = ({setOpen}: Props) => {
+const page:FC<Props>= ({setOpen}) => {
   return (
-    <div>
+    <div>setOpen
       <Heading
         title="Gshon E-Learning"
         keywords="Elearning"

@@ -7,9 +7,12 @@ import CourseAnalytics from '@/app/components/Admin/course/CourseAnalytics'
 import OrdersAnalytics from '@/app/components/Admin/orders/OrdersAnalytics'
 
 
-type Props = {}
+type Props = {
+  setOpen: any;
+  isDashboard?:any;
+}
 
-const page:FC<Props> = (props) => {
+const page:FC<Props> = ({setOpen, isDashboard}) => {
   return (
     <div>
        <Heading
@@ -22,8 +25,8 @@ const page:FC<Props> = (props) => {
             <AdminSidebar />
         </div>
         <div className='w-[85%]'>
-            <DashboardHeader />
-            <OrdersAnalytics />
+            <DashboardHeader setOpen={setOpen}/>
+            <OrdersAnalytics isDashboard={isDashboard}/>
         </div>
       </div>
     </div>

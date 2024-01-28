@@ -6,9 +6,11 @@ import AdminSidebar from '@/app/components/Admin/sidebar/AdminSidebar'
 import UsersAnalytics from '@/app/components/Admin/Users/UsersAnalytics'
 
 
-type Props = {}
+type Props = {
+  setOpen:any;
+}
 
-const page:FC<Props> = (props) => {
+const page:FC<Props> = ({setOpen}) => {
   return (
     <div>
        <Heading
@@ -21,7 +23,7 @@ const page:FC<Props> = (props) => {
             <AdminSidebar />
         </div>
         <div className='w-[85%]'>
-            <DashboardHeader />
+            <DashboardHeader setOpen={setOpen}/>
             <UsersAnalytics />
         </div>
       </div>
