@@ -3,7 +3,8 @@ import Loader from '@/app/components/Loader';
 import { useLoadUserQuery } from '@/redux/features/api/apiSlice';
 import { redirect } from 'next/navigation';
 import React, { useEffect } from 'react'
-import CourseContent from '../../components/Course/CourseContent'
+import CourseContent from '../../components/Course/CourseContent';
+
 
 type Props = {
     params:any;
@@ -30,7 +31,7 @@ const Page = ({params}: Props) => {
     <>
     {isLoading ? (<Loader />): (
         <div>
-            <CourseContent id={id}/>
+            <CourseContent id={id} user={data.user}/>
         </div>
     )}
     </>

@@ -6,7 +6,7 @@ type Props = {
   data: any;
   activeVideo?: number;
   setActiveVideo?: any;
-  isDemo: boolean;
+  isDemo?: boolean;
 };
 
 const CourseContentList: FC<Props> = (props) => {
@@ -91,7 +91,7 @@ const CourseContentList: FC<Props> = (props) => {
                 </button>
               </div>
             </div>
-            <h5 className="text-black dark:text-white ml-9">
+            <h5 className="text-black dark:text-white">
               {sectionVideoCount} Lessons .{' '}
               {sectionVideoLength < 60
                 ? sectionVideoLength
@@ -100,7 +100,7 @@ const CourseContentList: FC<Props> = (props) => {
             </h5>
             <br />
             {isSectionVisible && (
-              <div className="w-full ml-8">
+              <div className="w-full">
                 {sectionVideos.map((item: any, index: number) => {
                   const videoIndex: number = sectionStartIndex + index; //calculate the video with the overall list
                   const contentLength: number = item.videoLength / 60;
@@ -124,13 +124,13 @@ const CourseContentList: FC<Props> = (props) => {
                             size={25}
                             className="mr-2"
                             color="#b6cccc"
-                          />
+                          /> 
                         </div>
-                        <h1 className="text-[18px] inline-block break-words text-black dark:text-white">
+                        <h1 className="text-[18px] inline-block break-words text-white">
                           {item.title}
                         </h1>
                       </div>
-                      <h5 className="pl-8 text-black dark:text-white">
+                      <h5 className="pl-8 text-white">
                         {item.videoLength > 60
                           ? contentLength.toFixed(2)
                           : item.videoLength}{' '}
